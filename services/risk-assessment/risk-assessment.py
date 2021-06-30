@@ -15,7 +15,12 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 import mysql.connector
 from flask_cors import CORS
 
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+  tf.config.experimental.set_memory_growth(gpu, True)
+
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logging.info('Num GPUs Available: ' +  str(len(tf.config.list_physical_devices('GPU'))))
 
 ##############
 ## Vars init #
@@ -40,6 +45,10 @@ db_db = os.getenv('database-db', 'xraylabdb')
 
 # Inference model version
 model_version = os.getenv('model_version', '1')
+
+# Load the model
+model = tf.keras.models.load_model('./pneumonia_model.h5')
+logging.info('model loaded')
 
 ########
 # Code #
@@ -131,11 +140,10 @@ def load_image(bucket_name, img_path):
     logging.info('load_image')
     logging.info(bucket_name)
     logging.info(img_path)
-    logging.info(local_path)
-    
-    s3client.download_file(bucket_name, img_path, local_path)
-    
-    img = tf.keras.preprocessing.image.load_img(local_path, target_size=(150, 150))
+    obj = s3client.get_object(Bucket=bucket_name, Key=img_path)
+    img = Image.open(io.BytesIO(obj['Body'].read()))
+    img = img.convert('RGB')
+    img = img.resize((50, 50), Image.NEAREST)
     img_tensor = tf.keras.preprocessing.image.img_to_array(img)                    # (height, width, channels)
     img_tensor = np.expand_dims(img_tensor, axis=0)         # (1, height, width, channels), add a dimension because the model expects this shape: (batch_size, height, width, channels)
     img_tensor /= 255.                                      # imshow expects values in the range [0, 1]
@@ -145,8 +153,6 @@ def load_image(bucket_name, img_path):
 def prediction(new_image):
     logging.info('prediction')
     try:
-        model = tf.keras.models.load_model('./pneumonia_model.h5')
-        logging.info('model loaded')
         pred = model.predict(new_image)
         logging.info('prediction made')
     

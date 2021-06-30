@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM quay.io/bitnami/python:3.7
 
 WORKDIR /usr/src/app
 
