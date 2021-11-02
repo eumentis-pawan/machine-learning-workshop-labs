@@ -1,0 +1,12 @@
+FROM nvcr.io/nvidia/tensorflow:21.05-tf2-py3
+
+WORKDIR /usr/src/app
+
+COPY requirements.txt image-classifier-model-builder.py ./
+
+RUN wget -q http://kemo.labs/dropbox/liquor_xtra.tar.gz \
+ && tar zxvf liquor_xtra.tar.gz \
+ && /usr/bin/python -m pip install --upgrade pip \
+ && pip install -r requirements.txt
+
+CMD ["python3", "-u", "image-classifier-model-builder.py"]

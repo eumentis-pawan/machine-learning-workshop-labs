@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   name: grafana-xraylab-dashboard-template
@@ -10,7 +10,6 @@ objects:
     labels:
       app: grafana
     name: xraylab-dashboard
-    uid: xraylabdashboard
   spec:
     json: |
       {
