@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/tensorflow:21.05-tf2-py3
+FROM quay.io/bitnami/python:3.7
 
 WORKDIR /usr/src/app
 
