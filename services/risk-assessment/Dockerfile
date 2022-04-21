@@ -1,4 +1,4 @@
-FROM registry.redhat.io/rhel8/python-27
+FROM registry.redhat.io/ubi8/python-38
 
 WORKDIR /usr/src/app
 
