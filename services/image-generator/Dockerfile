@@ -1,4 +1,4 @@
-FROM quay.io/bitnami/python:3.7
+FROM registry.redhat.io/rhel8/python-27
 
 WORKDIR /usr/src/app
 
