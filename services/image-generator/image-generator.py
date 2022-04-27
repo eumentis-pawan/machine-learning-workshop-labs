@@ -16,6 +16,8 @@ import json
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
+logging.log(os.environ)
+
 ##############
 ## Vars init #
 ##############
